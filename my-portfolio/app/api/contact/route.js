@@ -6,22 +6,32 @@ export async function POST(req) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: process.env.CONTACT_EMAIL,
+      pass: process.env.CONTACT_PASS,
     },
   })
+
+  const emailBody = `
+You received a new message from your portfolio site:
+
+Name: ${name}
+Email: ${email}
+
+Message:
+${message}
+`
 
   try {
     await transporter.sendMail({
       from: email,
-      to: process.env.EMAIL_USER,
+      to: process.env.CONTACT_EMAIL,
       subject: `Portfolio Contact from ${name}`,
-      text: message,
+      text: emailBody,
     })
 
     return new Response('Email sent', { status: 200 })
   } catch (err) {
-    console.error(err)
+    console.error('Email error:', err)
     return new Response('Error sending email', { status: 500 })
   }
 }

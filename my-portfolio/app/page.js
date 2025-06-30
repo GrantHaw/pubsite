@@ -13,7 +13,7 @@ export default function Home() {
       <h1 className="text-4xl font-bold mt-6">Grant Hawerlander</h1>
       <p className="text-gray-600 mt-2">System Administrator | Cybersecurity Professional | Developer</p>
       <p className="mt-4 leading-relaxed text-lg">
-        Passionate about cybersecurity, system administration, and education. Currently serving as a System Administrator at RIT Tech Management/Resnet, RTP at Computer Science House, and active in cybersecurity competitions and education.
+        Passionate about cybersecurity, system administration, and education. Currently serving as a System Administrator at RIT Tech Management/ResNet, RTP + Socials Director at Computer Science House, and active in cybersecurity competitions and education. Currently working on mastering Cloud Security and development with Azure.
       </p>
     </div>
   )
