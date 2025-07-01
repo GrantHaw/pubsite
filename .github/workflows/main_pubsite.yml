@@ -1,76 +1,83 @@
+# .github/workflows/main_pubsite.yml
+# Build & deploy the Next 15 portfolio to the Azure App Service “pubsite”
+
 name: Build & Deploy to Azure Web App (pubsite)
 
 on:
   push:
-    branches:
-      - main          # deploy every push to main
-  workflow_dispatch:  # manual trigger
+    branches: [ main ]      # deploy every push to main
+  workflow_dispatch:        # …or run manually from the Actions tab
 
 permissions:
-  contents: read      # needed by actions/checkout
-  id-token: write     # **required** for OIDC login to Azure
+  contents: read            # required by actions/checkout
+  id-token: write           # *required* for OIDC login to Azure
 
 jobs:
+# ────────────────────────────────────────────────────────────────────────────────
+# 1) Build the Next.js site
+# ────────────────────────────────────────────────────────────────────────────────
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
-      - name: Checkout code
+      # ① Check out the repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Set up Node
-      - name: Setup Node.js 20
+      # ② Set up the Node 20 tool-chain
+      - name: Set up Node 20 LTS
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # 3️⃣ Install & build (SSR/Edge or static — Next handles it)
+      # ③ Install dependencies & build
       - name: Install dependencies
         run: npm ci
 
       - name: Build Next.js app
         run: npm run build
 
-      # 4️⃣ Zip everything EXCEPT node_modules (Azure will run npm i)
+      # ④ Zip the *entire* workspace **including node_modules**
       - name: Create deployment package
-        run: |
-          zip -r release.zip . -x "node_modules/*" ".git/*"
+        run: zip -r release.zip . -x ".git/*"
 
-      # 5️⃣ Upload artifact for deploy job
-      - name: Upload artifact
+      # ⑤ Publish the artifact for the deploy job
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: site-package
           path: release.zip
 
+# ────────────────────────────────────────────────────────────────────────────────
+# 2) Deploy the artifact to Azure App Service
+# ────────────────────────────────────────────────────────────────────────────────
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      # 6️⃣ Download the build artifact
-      - name: Download artifact
+      # ⑥ Download the package from the build job
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: site-package
           path: .
 
       - name: Unzip package
-        run: unzip release.zip
+        run: unzip -q release.zip
 
-      # 7️⃣ Azure login via OIDC
-      - name: Azure Login
+      # ⑦ Login to Azure using OIDC + your federated-credential secrets
+      - name: Azure CLI login (OIDC)
         uses: azure/login@v2
         with:
           client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
           tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
-      # 8️⃣ Deploy to your Web App
+      # ⑧ Deploy the ZIP to your App Service
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: pubsite            # <- your App Service name
+          app-name: pubsite          # exact App Service name
           slot-name: Production
           package: .
