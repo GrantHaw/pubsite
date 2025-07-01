@@ -1,17 +1,16 @@
-name: Build and Deploy Node.js App to Azure Web App
+name: build-and-deploy
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,37 +20,32 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build app
-        run: npm run build
+      - name: Build and export static site
+        run: npm run build && npm run export
 
-      - name: Zip full app
-        run: zip -r app.zip . -x "node_modules/*"
-
-      - name: Upload artifact
+      - name: Upload exported app
         uses: actions/upload-artifact@v4
         with:
-          name: app
-          path: app.zip
+          name: next-export
+          path: out
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-and-deploy
 
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: app
+          name: next-export
+          path: out
 
-      - name: Unzip app
-        run: unzip app.zip
-
-      - name: Azure Login
+      - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
@@ -62,5 +56,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'pubsite'
-          slot-name: 'Production'
-          package: .
+          package: ./out
