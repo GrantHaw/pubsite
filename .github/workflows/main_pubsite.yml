@@ -13,24 +13,26 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
-      - name: npm install, build
+      - name: Install dependencies and build
         run: |
+          cd my-portfolio
           npm install
           npm run build
-        working-directory: ./my-portfolio
 
-      - name: Zip artifact for deployment
-        run: zip -r release.zip ./
-        working-directory: ./my-portfolio
+      - name: Zip deployable output
+        run: |
+          cd my-portfolio
+          zip -r release.zip .next public package.json next.config.mjs postcss.config.mjs tailwind.config.js -x "**/node_modules/*"
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -60,7 +62,6 @@ jobs:
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'pubsite'
