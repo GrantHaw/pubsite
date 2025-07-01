@@ -14,15 +14,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set working directory
+        run: cd my-portfolio
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
       - name: Install dependencies
+        working-directory: my-portfolio
         run: npm install
 
       - name: Build project
+        working-directory: my-portfolio
         run: npm run build
 
       - name: Deploy to Azure Web App
@@ -30,4 +35,4 @@ jobs:
         with:
           app-name: 'pubsite'
           slot-name: 'Production'
-          package: .
+          package: my-portfolio
