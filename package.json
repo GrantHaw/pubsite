@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev":    "next dev",
-    "build":  "next build",
-    "start":  "next start -p 8080"
+    "dev":   "next dev",
+    "build": "next build",
+    "start": "next start -p 8080"   
   },
-
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "next": "15.3.4",
