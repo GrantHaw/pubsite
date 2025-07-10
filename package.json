@@ -16,7 +16,7 @@
     "nodemailer": "^7.0.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "serve": "^15.1.3"            
+    "serve": "^15.0.3"            
   },
 
   "devDependencies": {
