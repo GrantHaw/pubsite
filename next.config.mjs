@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export'
-}
+  // keep static–export build so Azure doesn’t need a Node server
+  output: 'export',
 
-export default nextConfig
+  // turn off the Image Optimization API (required for export mode)
+  images: {
+    unoptimized: true,
+  },
+};
+
+export default nextConfig;
