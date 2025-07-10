@@ -2,21 +2,19 @@
   "name": "my-portfolio",
   "version": "0.1.0",
   "private": true,
-
   "scripts": {
-    "dev":   "next dev",
-    "build": "next build",
-    "start": "next start -p $PORT"   
-
+    "dev": "next dev",
+    "build": "next build && next export",  
+    "start": "pm2 serve ./out 8080 --no-daemon"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "next": "15.3.4",
     "nodemailer": "^7.0.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "pm2": "^5.4.5"           
   },
-
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "autoprefixer": "^10.4.21",

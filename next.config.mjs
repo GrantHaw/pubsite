@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: { unoptimized: true }   // avoid Image-API in serverless Linux plan
+  output: 'export',
+  images: {                // disable Next’s image optimiser (not available in export mode)
+    unoptimized: true
+  }
 };
-
 export default nextConfig;
