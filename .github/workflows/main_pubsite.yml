@@ -1,4 +1,4 @@
-name: Build & Deploy to Azure Web App (pubsite)
+name: Build & deploy to Azure Web App (pubsite)
 
 on:
   push:
@@ -7,56 +7,29 @@ on:
 
 permissions:
   contents: read
-  id-token: write
+  id-token: write      # OIDC for azure/login
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set-up Node 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install deps
-        run: npm ci
-
-      # ⬇️  build **and** export — one line
-      - name: Build site
-        run: npm run build 
-
-      # zip everything (keep node_modules for “serve”)
-      - name: Zip artifact
-        run: zip -r release.zip .
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: site-package
-          path: release.zip
-
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: site-package
-          path: .
+    - uses: actions/checkout@v4
 
-      - run: unzip release.zip
+    # OIDC login
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
+        tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
+        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
-          tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
+    # Zip **source** – let Oryx handle install & build on the server
+    - name: Zip source
+      run: zip -r pubsite.zip . -x ".git/*" -x ".github/*"
 
-      - name: Deploy to Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: pubsite
-          package: .
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: pubsite
+        package: pubsite.zip         # raw source
