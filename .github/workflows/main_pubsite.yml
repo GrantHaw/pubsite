@@ -1,4 +1,3 @@
-# .github/workflows/main_pubsite.yml
 name: Build & Deploy to Azure Web App (pubsite)
 
 on:
@@ -8,7 +7,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write      # for OIDC login to Azure
+  id-token: write
 
 jobs:
   build:
@@ -16,21 +15,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - name: Set-up Node 20
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '20'
 
-      - name: Install dependencies
+      - name: Install deps
         run: npm ci
 
-      - name: Build Next.js app
-        run: npm run build
+      # ⬇️  build **and** export — one line
+      - name: Build + Export static site
+        run: npm run build && npm run export
 
-      # zip everything (including node_modules) except .git
-      - name: Create deployment package
-        run: zip -r release.zip . -x ".git/*"
+      # zip everything (keep node_modules for “serve”)
+      - name: Zip artifact
+        run: zip -r release.zip .
 
-      - name: Upload build artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: site-package
@@ -45,18 +46,17 @@ jobs:
           name: site-package
           path: .
 
-      - run: unzip -q release.zip
+      - run: unzip release.zip
 
-      - name: Azure login
+      - name: Azure Login
         uses: azure/login@v2
         with:
           client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
           tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: pubsite
-          slot-name: production        # ← lower-case ‘production’
           package: .
