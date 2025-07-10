@@ -4,10 +4,10 @@
   "private": true,
 
   "scripts": {
-    "dev":    "next dev",
-    "build":  "next build",
-    "export": "next export",
-    "start":  "npx serve -s out -l 8080"
+    "dev": "next dev",          
+    "build": "next build",      
+    "start": "next start -p 8080" 
+
   },
 
   "dependencies": {
@@ -15,8 +15,7 @@
     "next": "15.3.4",
     "nodemailer": "^7.0.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "serve": "^15.0.3"            
+    "react-dom": "^19.0.0"
   },
 
   "devDependencies": {
