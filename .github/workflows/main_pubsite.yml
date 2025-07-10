@@ -24,8 +24,8 @@ jobs:
         run: npm ci
 
       # ⬇️  build **and** export — one line
-      - name: Build + Export static site
-        run: npm run build && npm run export
+      - name: Build site
+        run: npm run build 
 
       # zip everything (keep node_modules for “serve”)
       - name: Zip artifact
