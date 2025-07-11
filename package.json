@@ -5,8 +5,8 @@
 
   "scripts": {
     "dev":   "next dev",
-    "build": "next build && next export",
-    "start": "npx serve -s out -l 8080"
+    "build": "next build",
+    "start": "next start"
   },
 
   "dependencies": {
