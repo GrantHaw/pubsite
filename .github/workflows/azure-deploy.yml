@@ -11,7 +11,7 @@ permissions:
 
 env:
   NODE_VERSION: '20'
-  RESOURCE_GROUP: 'myPortfolioRG'
+  RESOURCE_GROUP: 'pubsite_group'
 
 jobs:
   build-and-deploy:
@@ -47,6 +47,6 @@ jobs:
       - name: 🚀 Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: pubsite
+          app-name:           pubsite
           resource-group-name: ${{ env.RESOURCE_GROUP }}
-          package: pubsite.zip
+          package:            pubsite.zip
