@@ -14,45 +14,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Check out code
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # 2. Set up Node.js
+      - uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
+      # 3. Install & build
+      - run: npm ci
+      - run: npm run build
 
-      - name: Build Next.js app
-        run: npm run build
+      # 4. Zip up everything for App Service
+      - run: zip -r pubsite.zip . -x ".git/**" "node_modules/**"
 
-      - name: Zip for deployment
-        run: |
-          zip -r pubsite.zip . -x ".git/*" ".github/*" "node_modules/*"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: site-package
-          path: pubsite.zip
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: site-package
-          path: .
-
-      - name: Unzip
-        run: unzip -o pubsite.zip
-
+      # 5. Login to Azure using OIDC
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
-          tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
+          client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
+      # 6. Deploy the zip to your Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: pubsite
-          package: .
+          package: pubsite.zip
