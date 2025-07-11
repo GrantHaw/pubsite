@@ -2,21 +2,23 @@ name: Build & Deploy to Azure Web App (pubsite)
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  id-token: write
+  contents: read       # for checkout
+  id-token: write      # to mint OIDC token for Azure login
 
 env:
   NODE_VERSION: '20'
+  RESOURCE_GROUP: 'myPortfolioRG'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: ⬇️ Checkout
+      - name: ⬇️ Checkout code
         uses: actions/checkout@v4
 
       - name: ⎔ Use Node ${{ env.NODE_VERSION }}
@@ -24,28 +26,27 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: 📦 Install dependencies
-        run: npm ci
+      - name: 📦 Install & build
+        run: |
+          npm ci
+          npm run build
+          npm prune --production
 
-      - name: 🛠 Build Next.js app
-        run: npm run build
+      - name: 📦 Package for deploy
+        run: |
+          zip -r pubsite.zip . \
+            -x ".git/*" ".github/*" ".env.local"
 
       - name: 🔐 Azure login (OIDC)
-        uses: azure/login@v2
+        uses: azure/login@v1
         with:
           client-id:       ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
           tenant-id:       ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
-      - name: ⚙️ Ensure build-on-deploy
-        run: |
-          az webapp config appsettings set \
-            --resource-group pubsite_group \
-            --name pubsite \
-            --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
-
       - name: 🚀 Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: pubsite
-          package: .
+          resource-group-name: ${{ env.RESOURCE_GROUP }}
+          package: pubsite.zip
