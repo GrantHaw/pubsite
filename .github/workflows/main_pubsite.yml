@@ -7,44 +7,52 @@ on:
 
 permissions:
   contents: read
-  id-token: write       # OIDC → Azure login
-
-env:
-  NODE_VERSION: '20'
+  id-token: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: ⬇️ Checkout
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: ⎔ Use Node ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-    - name: 📦 Install deps & build static site
-      run: |
-        npm ci
-        npm run build          # creates ./out
+      - name: Install dependencies
+        run: npm ci
 
-    - name: 📚 Create deployment zip (only ./out)
-      run: |
-        cd out
-        zip -r ../pubsite.zip .
-        cd ..
+      - name: Build Next.js app
+        run: npm run build
 
-    - name: 🔐 Azure login (OIDC)
-      uses: azure/login@v2
-      with:
-        client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
-        tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
-        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
+      - name: Zip for deployment
+        run: |
+          zip -r pubsite.zip . -x ".git/*" ".github/*" "node_modules/*"
 
-    - name: 🚀 Deploy zip to Web App
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: pubsite
-        package: pubsite.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-package
+          path: pubsite.zip
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: site-package
+          path: .
+
+      - name: Unzip
+        run: unzip -o pubsite.zip
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id:      ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
+          tenant-id:      ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: pubsite
+          package: .
