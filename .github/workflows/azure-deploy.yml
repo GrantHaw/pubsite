@@ -1,47 +1,51 @@
-name: Build & One-Deploy to Azure
+name: Build & Deploy to Azure Web App (pubsite)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
   id-token: write
 
-on:
-  push:
-    branches: [ main ]
+env:
+  NODE_VERSION: '20'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      # 1️⃣ Check out your code
-      - uses: actions/checkout@v3
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
 
-      # 2️⃣ Authenticate to Azure
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: ⎔ Use Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🛠 Build Next.js app
+        run: npm run build
+
+      - name: 🔐 Azure login (OIDC)
+        uses: azure/login@v2
         with:
           client-id:       ${{ secrets.AZUREAPPSERVICE_CLIENTID_E5978DC6004B4BB995ACD60ADAF513EF }}
           tenant-id:       ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
-      # 3️⃣ Use Node 20 and build
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
+      - name: ⚙️ Ensure build-on-deploy
+        run: |
+          az webapp config appsettings set \
+            --resource-group pubsite_group \
+            --name pubsite \
+            --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
 
-      # 4️⃣ Deploy with Azure CLI’s ZIP-push (OneDeploy under the hood)
-      - name: Deploy via Azure CLI
-        uses: azure/cli@v2
+      - name: 🚀 Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
         with:
-          azcliversion: latest
-          inlineScript: |
-            az webapp deploy \
-              --resource-group myPortfolioRG \
-              --name pubsite \
-              --src-path "${{ github.workspace }}" \
-              --type zip
+          app-name: pubsite
+          package: .
