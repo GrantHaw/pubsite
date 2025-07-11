@@ -43,3 +43,4 @@ jobs:
         with:
           app-name: pubsite
           package: .
+          enable-oryx-build: true
