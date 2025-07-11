@@ -1,9 +1,8 @@
-name: Build & Deploy to Azure
+name: Build & One-Deploy to Azure
 
-# Grant GitHub Actions the ability to mint an OIDC token
 permissions:
-  contents: read         # for checking out your code
-  id-token: write        # to obtain the AAD OIDC token
+  contents: read
+  id-token: write
 
 on:
   push:
@@ -14,22 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your code
+      # 1️⃣ Check out your code
       - uses: actions/checkout@v3
 
-      # 2️⃣ Use Node 20
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
-
-      # 3️⃣ Install & build
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
-
-      # 4️⃣ Login to Azure via OIDC (no client secret needed)
+      # 2️⃣ Authenticate to Azure
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -37,10 +24,24 @@ jobs:
           tenant-id:       ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
-      # 5️⃣ Deploy the artifiact to your Web App
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+      # 3️⃣ Use Node 20 and build
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          app-name: pubsite
-          package: .
-          enable-oryx-build: true
+          node-version: "20"
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+
+      # 4️⃣ Deploy with Azure CLI’s ZIP-push (OneDeploy under the hood)
+      - name: Deploy via Azure CLI
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az webapp deploy \
+              --resource-group myPortfolioRG \
+              --name pubsite \
+              --src-path "${{ github.workspace }}" \
+              --type zip
