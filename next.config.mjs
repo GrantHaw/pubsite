@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // produce a standalone server bundle
+  output: 'standalone',
+  // disable Next.js built-in image optimization (in serverless mode)
   images: {
     unoptimized: true
   }
