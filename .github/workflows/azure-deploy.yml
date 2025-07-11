@@ -1,5 +1,10 @@
 name: Build & Deploy to Azure
 
+# Grant GitHub Actions the ability to mint an OIDC token
+permissions:
+  contents: read         # for checking out your code
+  id-token: write        # to obtain the AAD OIDC token
+
 on:
   push:
     branches: [ main ]
@@ -9,22 +14,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Grab your code
+      # 1️⃣ Checkout your code
       - uses: actions/checkout@v3
 
-      # 2. Use Node 20
+      # 2️⃣ Use Node 20
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20"
 
-      # 3. Install & build
+      # 3️⃣ Install & build
       - name: Install dependencies
         run: npm ci
       - name: Build
         run: npm run build
 
-      # 4. Login to Azure via OIDC (no secret)
+      # 4️⃣ Login to Azure via OIDC (no client secret needed)
       - name: Azure Login
         uses: azure/login@v1
         with:
@@ -32,7 +37,7 @@ jobs:
           tenant-id:       ${{ secrets.AZUREAPPSERVICE_TENANTID_8824E98435E440FAA46E146AD7716A44 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6A3ECC57385541ACB3AC40EA396FC5B5 }}
 
-      # 5. Deploy to your Web App
+      # 5️⃣ Deploy the artifiact to your Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
