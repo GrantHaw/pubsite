@@ -1,10 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@tailwindcss base;
+@tailwindcss components;
+@tailwindcss utilities;
 
-/* override body colors & font */
+/* Custom styles */
 body {
-  @apply bg-brand-light dark:bg-brand-dark
-         text-gray-900 dark:text-gray-100
-         font-sans;
+  @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+}
+
+/* Custom brand colors as CSS variables */
+:root {
+  --brand-light: #f5f5f5;
+  --brand-default: #334155;
+  --brand-dark: #1e293b;
+}
+
+/* Footer styles */
+.site-footer {
+  @apply bg-slate-700 text-white text-center py-4 mt-8;
 }
