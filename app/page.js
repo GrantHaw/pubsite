@@ -6,7 +6,7 @@ export default function Home() {
     <section className="mt-16 text-center mb-12">
       <div className="inline-block rounded-full overflow-hidden w-48 h-48 mb-4">
         <Image
-          src="/portraits/professional.jpeg"
+          src="/public/portraits/professional.jpeg"
           alt="Grant Hawerlander"
           width={192}
           height={192}
