@@ -42,3 +42,14 @@ next-env.d.ts
 "node_modules/"       
 ".next/"              
 ".deployment"         
+
+# PM2 logs
+/logs
+*.log
+
+# PM2 runtime files
+.pm2
+pids
+*.pid
+*.seed
+*.pid.lock
