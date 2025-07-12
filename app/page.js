@@ -1,4 +1,3 @@
-// app/page.js
 import Image from "next/image";
 
 export default function Home() {
@@ -11,6 +10,7 @@ export default function Home() {
           width={192}
           height={192}
           className="object-cover"
+          unoptimized={true}
         />
       </div>
       <h1 className="text-4xl font-bold">Grant Hawerlander</h1>

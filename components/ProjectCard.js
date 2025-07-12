@@ -13,6 +13,7 @@ export default function ProjectCard({ project }) {
             width={500}
             height={300}
             className="object-cover"
+            unoptimized={true}
           />
           <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black to-transparent p-4">
             <h2 className="text-white text-lg font-bold">{project.title}</h2>
