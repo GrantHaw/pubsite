@@ -1,50 +1,54 @@
 // app/projects/page.js
-import ProjectCard from '../../components/ProjectCard';
+import Win from '../../components/Win'
+import tools, { toolCats } from '../../data/tools'
+import projects from '../../data/projects'
 
-const projects = [
-  {
-    title: "Proxmox & TrueNAS",
-    description:
-      "Managing virtualization and NAS systems for RIT student data backups & creating and managing my own infrastructure.",
-    image: "/projects/weave-scope.jpeg",
-    link: "https://granthaw.github.io/ProxmoxSetup/",
-  },
-  {
-    title: "Pubsite",
-    description:
-      "Built and deployed my own portfolio website to showcase personal projects, skills, and experiences.",
-    image: "/projects/pubsite.png",
-    link: "/",
-  },
-  {
-    title: "Whisper AI Glasses",
-    description:
-      "Real-time speech-to-text transcription glasses for accessibility at ImagineRIT.",
-    image: "/projects/workshop.jpeg",
-    link: "https://github.com/GrantHaw/Live-Transcription",
-  },
-  {
-    title: "Introductory Programming & Ethical Hacking",
-    description:
-      "Teaching Python and coding fundamentals through interactive workshops and lectures. Helped beginner English students create a text-based software of their choosing.",
-    image: "/projects/coding-teaching.jpeg",
-    link: "https://github.com/GrantHaw/VAISPhishingCampaign",
-  },
-  {
-    title: "Azure Development + Security",
-    description:
-      "Deploying secure web apps using Azure and optimizing network security groups for real-world threat models. Published a phishing target website that tracked clicks and IP addresses.",
-    image: "/projects/azure.png",
-    link: "https://github.com/GrantHaw/VAISPhishingCampaign",
-  },
-];
 
 export default function ProjectsPage() {
   return (
-    <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 p-4">
-      {projects.map((project, index) => (
-        <ProjectCard key={index} project={project} />
-      ))}
+    <div>
+      <h1 className="page-title mb-6">projects</h1>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+        {projects.map((p) => (
+          <Win key={p.id} id={p.id} title={p.id} className={p.wide ? 'md:col-span-2 lg:col-span-3' : ''} bodyClass={p.wide ? 'grid md:grid-cols-[260px_1fr] gap-6 items-center' : ''}>
+            <div className={'rounded-lg overflow-hidden border-2 border-[var(--plum)] ' + (p.contain ? 'bg-white p-5 flex justify-center' : '')}>
+              <img src={p.img} alt={p.alt} className={p.contain ? 'max-h-44' : 'w-full aspect-[16/10] object-cover'} />
+            </div>
+            <div>
+              <h2 className={'f-head leading-tight ' + (p.wide ? 'text-[38px]' : 'text-[24px] mt-4')}>{p.title}</h2>
+              <p className="mt-2 leading-relaxed max-w-[68ch]">{p.desc}</p>
+              {p.tags ? <div className="flex flex-wrap gap-2 mt-3">{p.tags.map((t) => <span key={t} className="chip">{t}</span>)}</div> : null}
+              {p.link ? <a href={p.link} target="_blank" rel="noopener noreferrer" className="gel mt-4">{p.link.includes("github.com") ? "view on GitHub" : "open"}</a> : null}
+            </div>
+          </Win>
+        ))}
+      </div>
+
+      <Win id="tools" title="tools" className="mt-8">
+        <h2 className="f-head text-[30px] leading-tight">Tools</h2>
+        {toolCats.map((c) => {
+          const list = tools.filter((t) => t.cat === c.id)
+          if (!list.length) return null // empty section stays hidden
+          return (
+            <div key={c.id} id={'tools-' + c.id} className="mt-5 first:mt-2 scroll-mt-6">
+              <h3 className="f-ui text-[18px] text-[#c4006f]">{c.name}</h3>
+              <p className="text-[14px] text-[#6b3a5c]">{c.blurb}</p>
+              <ul className="mt-1">
+                {list.map((t) => (
+                  <li key={t.id} className="grid sm:grid-cols-[1fr_auto] gap-x-6 gap-y-2 py-4 border-b-[1.5px] border-dotted border-[var(--bub)] last:border-0">
+                    <div>
+                      <h4 className="f-head text-[22px] leading-tight">{t.name}</h4>
+                      <p className="mt-1 max-w-[62ch]">{t.what}</p>
+                      <p className="f-ui text-[15px] mt-1 text-[#6b3a5c]">{t.tech}</p>
+                    </div>
+                    {t.link ? <a href={t.link} target="_blank" rel="noopener noreferrer" className="gel silver self-start">source</a> : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        })}
+      </Win>
     </div>
-  );
+  )
 }

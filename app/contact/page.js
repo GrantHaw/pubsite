@@ -2,115 +2,79 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import Win from '../../components/Win'
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [status, setStatus] = useState(null)
-  const [submitting, setSubmitting] = useState(false)
+  const [busy, setBusy] = useState(false)
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
-  const handleSubmit = async (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
-    setSubmitting(true)
+    setBusy(true)
     setStatus(null)
-
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       })
-      if (!res.ok) throw new Error('Network response was not ok')
-      setStatus('Message sent!')
+      if (!res.ok) throw new Error('bad res')
+      setStatus({ ok: true, t: 'Message sent. I\'ll reply to the email you gave.' })
       setForm({ name: '', email: '', message: '' })
     } catch {
-      setStatus('Failed to send message.')
+      setStatus({ ok: false, t: 'Your message didn\'t send. Try again, or email contactme@ghaw.net.' })
     } finally {
-      setSubmitting(false)
+      setBusy(false)
     }
   }
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-md mx-auto bg-white dark:bg-gray-700 rounded-2xl shadow-xl overflow-hidden">
-        <div className="p-6">
-          <div className="flex justify-center mb-6">
-            <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800">
-              <Image
-                src="/portraits/casual.jpeg"
-                alt="Contact Grant"
-                width={128}
-                height={128}
-                className="object-cover"
-                unoptimized={true}
-              />
-            </div>
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
+      <aside className="lg:col-span-4 space-y-6">
+        <div className="bezel">
+          <div className="bezel-screen">
+            <img src="/y2k/grant-ocean.jpg" alt="Grant smiling in front of the ocean, wearing a bandana and an orange shirt" className="w-full aspect-[4/5] object-cover" />
           </div>
-
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 text-center mb-6">
-            Contact Me
-          </h2>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              id="name"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              placeholder="Your Name"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            <input
-              id="email"
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              placeholder="Your Email"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            <textarea
-              id="message"
-              name="message"
-              value={form.message}
-              onChange={handleChange}
-              required
-              rows={5}
-              placeholder="Your Message"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            <button
-              type="submit"
-              disabled={submitting}
-              className={`w-full py-3 text-white font-medium rounded-lg transition ${
-                submitting
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-blue-500 hover:bg-blue-600'
-              }`}
-            >
-              {submitting ? 'Sending...' : 'Send Message'}
-            </button>
-
-            {status && (
-              <p
-                className={`text-center mt-2 text-sm ${
-                  status.includes('Failed') ? 'text-red-400' : 'text-green-400'
-                }`}
-              >
-                {status}
-              </p>
-            )}
-          </form>
         </div>
-      </div>
+        <Win title="links">
+          <ul className="space-y-2">
+            <li><a className="underline decoration-2 underline-offset-4" href="mailto:contactme@ghaw.net">contactme@ghaw.net</a></li>
+            <li><a className="underline decoration-2 underline-offset-4" href="https://www.linkedin.com/in/grant-hawerlander/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <li><a className="underline decoration-2 underline-offset-4" href="https://github.com/GrantHaw" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          </ul>
+        </Win>
+      </aside>
+
+      <Win title="new_message.txt" className="lg:col-span-8">
+        <h1 className="page-title !text-[clamp(38px,6vw,64px)] mb-6">contact</h1>
+        <form onSubmit={onSubmit} className="space-y-3">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <label className="block">
+              <span className="f-ui text-[16px]">name</span>
+              <input name="name" value={form.name} onChange={onChange} required maxLength={100} placeholder="Your name" className="y2k-input mt-1" />
+            </label>
+            <label className="block">
+              <span className="f-ui text-[16px]">email</span>
+              <input type="email" name="email" value={form.email} onChange={onChange} required maxLength={200} placeholder="you@example.com" className="y2k-input mt-1" />
+            </label>
+          </div>
+          <label className="block">
+            <span className="f-ui text-[16px]">message</span>
+            <textarea name="message" value={form.message} onChange={onChange} required maxLength={5000} rows={6} placeholder="What would you like to talk about?" className="y2k-input mt-1" />
+          </label>
+          <div className="flex items-center gap-4 flex-wrap">
+            <button type="submit" disabled={busy} className={'gel !px-8 !py-2' + (busy ? ' opacity-60 cursor-wait' : '')}>
+              {busy ? 'sending...' : 'send message'}
+            </button>
+            {status ? (
+              <p role="status" className={'f-ui text-[16px] ' + (status.ok ? 'text-[#1d6b3a]' : 'text-[#b0002a]')}>{status.t}</p>
+            ) : null}
+          </div>
+        </form>
+      </Win>
     </div>
   )
 }
