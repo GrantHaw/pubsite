@@ -5,5 +5,5 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   const v = await getNow()
-  return Response.json(v, { headers: { 'Cache-Control': 'public, max-age=15' } })
+  return Response.json(v, { headers: { 'Cache-Control': 'no-store' } }) // server already caches 8s, browser shouldnt add more
 }

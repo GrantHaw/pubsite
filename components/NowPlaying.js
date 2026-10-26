@@ -20,7 +20,7 @@ export function useNow(initial) {
     let dead = false
     const get = () => fetch('/api/now-playing').then((r) => r.json()).then((v) => { if (!dead) setNp(Object.assign({}, v, { at: Date.now() })) }).catch(() => {})
     if (!initial) get()
-    const t = setInterval(get, 30000)
+    const t = setInterval(get, 15000)
     const k = setInterval(() => setTick((x) => x + 1), 1000)
     return () => { dead = true; clearInterval(t); clearInterval(k) }
   }, []) // eslint-disable-line
@@ -46,12 +46,22 @@ export default function NowPlaying({ initial }) {
           <span className={'amp-state ' + (np.playing ? 'on' : '')}>{np.playing ? '▶ now playing' : '■ last played ' + (np.playedAt && live ? ago(np.playedAt) : '')}</span>
           {np.playing ? <span className="eq" aria-hidden="true">{[0, 1, 2, 3, 4, 5, 6].map((i) => <i key={i} style={{ animationDelay: (i * 0.13) + 's' }} />)}</span> : null}
         </div>
-        <div className="amp-time" aria-label={'Elapsed ' + mmss(prog)}>{mmss(prog)}<span>/ {mmss(t.dur)}</span></div>
-        <div className="amp-marquee"><span>{t.title + '  ***  ' + t.artist + '  ***  ' + t.album + '  ***  '}</span></div>
-        <div className="amp-seek" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label="Song progress"><i style={{ width: pct + '%' }} /></div>
+        {np.playing ? (
+          <>
+            <div className="amp-time" aria-label={'Elapsed ' + mmss(prog)}>{mmss(prog)}<span>/ {mmss(t.dur)}</span></div>
+            <div className="amp-marquee"><span>{t.title + '  ***  ' + t.artist + '  ***  ' + t.album + '  ***  '}</span></div>
+            <div className="amp-seek" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} aria-label="Song progress"><i style={{ width: pct + '%' }} /></div>
+          </>
+        ) : (
+          // not playing: no frozen clock, just the song sitting still
+          <>
+            <div className="amp-title" title={t.title}>{t.short || t.title}</div>
+            <div className="amp-sub">{t.artist + (t.album ? '  /  ' + t.album : '')}</div>
+          </>
+        )}
         <div className="flex flex-wrap items-center gap-3 mt-3">
           <a href={t.url} target="_blank" rel="noopener noreferrer" className="gel lime">open in Spotify</a>
-          <span className="text-[14px] text-[#d9c7d4] truncate min-w-0" title={t.title + ' by ' + t.artist}>{t.short || t.title} by {t.artist}</span>
+          {np.playing ? <span className="text-[14px] text-[#d9c7d4] truncate min-w-0" title={t.title + ' by ' + t.artist}>{t.short || t.title} by {t.artist}</span> : null}
         </div>
       </div>
     </div>
