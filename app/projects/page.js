@@ -1,5 +1,6 @@
 // app/projects/page.js
 import Win from '../../components/Win'
+import Pic from '../../components/Pic'
 import tools, { toolCats } from '../../data/tools'
 import projects from '../../data/projects'
 
@@ -12,7 +13,7 @@ export default function ProjectsPage() {
         {projects.map((p) => (
           <Win key={p.id} id={p.id} title={p.id} className={p.wide ? 'md:col-span-2 lg:col-span-3' : ''} bodyClass={p.wide ? 'grid md:grid-cols-[260px_1fr] gap-6 items-center' : ''}>
             <div className={'rounded-lg overflow-hidden border-2 border-[var(--plum)] ' + (p.contain ? 'bg-white p-5 flex justify-center' : '')}>
-              <img src={p.img} alt={p.alt} className={p.contain ? 'max-h-44' : 'w-full aspect-[16/10] object-cover'} />
+              <Pic src={p.img} alt={p.alt} loading={p.wide ? undefined : 'lazy'} decoding="async" className={p.contain ? 'max-h-44' : 'w-full aspect-[16/10] object-cover'} />
             </div>
             <div>
               <h2 className={'f-head leading-tight ' + (p.wide ? 'text-[38px]' : 'text-[24px] mt-4')}>{p.title}</h2>

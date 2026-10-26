@@ -76,7 +76,8 @@ function walk(tree, parts) {
 }
 
 function resolve(cwd, arg) {
-  if (!arg || arg === '~') return []
+  if (!arg) return cwd.slice() // no arg = where you already are
+  if (arg === '~') return []
   let parts = arg.startsWith('~') || arg.startsWith('/') ? [] : cwd.slice()
   arg.replace(/^~\/?/, '').replace(/^\//, '').split('/').forEach((s) => {
     if (!s || s === '.') return
@@ -159,7 +160,7 @@ export default function Shell({ tree, id, className }) {
       else if (n.t === 'f') res = [{ t: parts[parts.length - 1] }]
       else res = lsLines(n, parts)
     } else if (cmd === 'cd') {
-      const parts = resolve(base, arg)
+      const parts = resolve(base, arg || '~') // bare cd goes home like a real shell
       const n = walk(tree, parts)
       if (!n) res = [{ c: 'a', t: 'cd: ' + arg + ': no such directory' }]
       else if (n.t !== 'd') res = [{ c: 'a', t: 'cd: ' + arg + ': not a directory' }]

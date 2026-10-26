@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import Win from '../../components/Win'
+import Pic from '../../components/Pic'
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
@@ -36,7 +37,7 @@ export default function ContactPage() {
       <aside className="lg:col-span-4 space-y-6">
         <div className="bezel">
           <div className="bezel-screen">
-            <img src="/y2k/grant-ocean.jpg" alt="Grant smiling in front of the ocean, wearing a bandana and an orange shirt" className="w-full aspect-[4/5] object-cover" />
+            <Pic src="/y2k/grant-ocean.jpg" alt="Grant smiling in front of the ocean, wearing a bandana and an orange shirt" className="w-full aspect-[4/5] object-cover" />
           </div>
         </div>
         <Win title="links">

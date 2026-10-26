@@ -3,21 +3,31 @@ import Win from '../components/Win'
 import Shell from '../components/Shell'
 import GitLog from '../components/GitLog'
 import Pixel from '../components/Pixel'
+import Pic from '../components/Pic'
 import HeroScenes from '../components/HeroScenes'
 import tools from '../data/tools'
 import projects from '../data/projects'
 import { listFolders, prettyDate } from '../lib/blog'
 import { buildTree } from '../lib/vfs'
-import { getPlaylist, getNow } from '../lib/spotify'
+import { Suspense } from 'react'
+import { getPlaylist } from '../lib/spotify'
 import { NowCard } from '../components/NowPlaying'
 
 // rendered live so spotify works right after a deploy (ci doesnt have the keys). the api calls are still cached
 export const dynamic = 'force-dynamic'
 
-export default async function Home() {
+// the slow bits (spotify, github) stream in after the page is already on screen
+async function ShellWithMusic({ className }) {
+  const pl = await getPlaylist()
+  return <Shell id="shell" tree={buildTree(pl)} className={className} />
+}
+
+function LogLoading() {
+  return <Win term title="git log" bodyClass="min-h-[300px]"><p className="dim">git log --oneline -n 8 ...</p></Win>
+}
+
+export default function Home() {
   const posts = listFolders().slice(0, 4)
-  const [pl, now] = await Promise.all([getPlaylist(), getNow()])
-  const tree = buildTree(pl)
   return (
     <div className="space-y-5">
       {/* hero */}
@@ -38,7 +48,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="relative sticker max-w-[260px] w-full mx-auto">
-            <img src="/y2k/grant-pinto-mirror.jpg" alt="Grant taking a mirror selfie with Pinto, their tuxedo cat, perched on their shoulder" className="w-full aspect-[4/5] object-cover" />
+            <Pic src="/y2k/grant-pinto-mirror.jpg" width="600" height="721" fetchPriority="high" alt="Grant taking a mirror selfie with Pinto, their tuxedo cat, perched on their shoulder" className="w-full aspect-[4/5] object-cover" />
             <span className="absolute -top-5 -left-5 spin8" aria-hidden="true"><Pixel name="star" size={5} /></span>
           </div>
         </div>
@@ -51,14 +61,16 @@ export default async function Home() {
             <p>I also run management operations for the RIT ITS Tech Center, building the internal tools that keep the repair shop running! Off the clock I&apos;m playing CTFs, emulating retro Wii games, or getting yelled at by my cat, Pinto.</p>
           </div>
         </Win>
-        <Shell id="shell" tree={tree} className="order-8 lg:order-2 lg:col-span-7" />
-        <div className="order-7 lg:order-3 lg:col-span-7"><GitLog id="gitlog" /></div>
+        <Suspense fallback={<Shell id="shell" tree={buildTree(null)} className="order-8 lg:order-2 lg:col-span-7" />}>
+          <ShellWithMusic className="order-8 lg:order-2 lg:col-span-7" />
+        </Suspense>
+        <div className="order-7 lg:order-3 lg:col-span-7"><Suspense fallback={<LogLoading />}><GitLog id="gitlog" /></Suspense></div>
         <Win title="profile" className="order-2 lg:order-4 lg:col-span-5">
           <dl>
+            <div className="stat"><dt>pronouns</dt><dd>they/them</dd></div>
             <div className="stat"><dt>school</dt><dd>RIT, Cybersecurity, May 2028</dd></div>
             <div className="stat"><dt>work</dt><dd>Coalfire Division Hex, RIT ITS Tech Center</dd></div>
             <div className="stat"><dt>likes</dt><dd>CTFs, homelabs, retro Wii games</dd></div>
-            <div className="stat"><dt>dislikes</dt><dd>plaintext passwords, chatbots that overshare</dd></div>
           </dl>
           <div className="flex flex-wrap gap-2 mt-4">
             <a className="gel silver" href="https://github.com/GrantHaw" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -100,10 +112,10 @@ export default async function Home() {
           </ul>
         </Win>
         <Win title="pinto.jpg" className="order-6 lg:order-8 lg:col-span-3" bodyClass="!p-3">
-          <img src="/y2k/pinto-bag.jpg" alt="Pinto the tuxedo cat peeking out of a paper shopping bag" className="w-full aspect-square object-cover object-[50%_45%] rounded-md border-2 border-[var(--plum)]" />
+          <Pic wrap="rounded-md overflow-hidden" src="/y2k/pinto-bag.jpg" width="600" height="800" loading="lazy" decoding="async" alt="Pinto the tuxedo cat peeking out of a paper shopping bag" className="w-full aspect-square object-cover object-[50%_45%] rounded-md border-2 border-[var(--plum)]" />
           <p className="f-ui text-[15px] mt-2 text-center">Pinto (Chief Morale Officer)</p>
         </Win>
-        <div className="order-9 lg:col-span-12"><NowCard initial={now && now.ok ? now : null} /></div>
+        <div className="order-9 lg:col-span-12"><NowCard initial={null} /></div>
       </div>
     </div>
   )

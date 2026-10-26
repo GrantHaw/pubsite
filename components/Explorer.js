@@ -26,8 +26,8 @@ export default function Explorer({ folder, current, children }) {
               <li key={f.name}>
                 <Link href={base + '/' + f.name} className="fx-row" aria-current={current === f.name ? 'page' : undefined} style={current === f.name ? { background: 'var(--bub)' } : null}>
                   <FileIco kind={f.kind} />
-                  <span className="truncate">{f.name}</span>
-                  <span className="f-ui text-[13px]">{prettySize(f.size)}</span>
+                  <span className="truncate" title={f.name}>{f.title || f.name}</span>
+                  <span className="f-ui text-[13px]">{f.cat || prettySize(f.size)}</span>
                 </Link>
               </li>
             ))}

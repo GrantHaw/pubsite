@@ -14,7 +14,7 @@ const projects = [
   },
   {
     id: 'ctf', title: 'CTFs', img: '/y2k/ritsec.jpg', alt: 'RITSEC CTF logo',
-    desc: 'Top RIT team at RITSEC CTF 2025 with the highest score of any RIT competitor, and the highest RIT score again at WiCyS National CTF 2026. Mostly reverse engineering, forensics, web, and stego.',
+    desc: 'Top RIT team at RITSEC CTF 2026 with the highest score of any RIT competitor, and the highest RIT score again at WiCyS National CTF 2026. Mostly reverse engineering, forensics, web, and stego.',
     tags: ['rev', 'forensics', 'web'],
   },
   {
@@ -28,7 +28,7 @@ const projects = [
     link: 'https://github.com/GrantHaw/VAISPhishingCampaign',
   },
   {
-    id: 'azure', title: 'Azure Development and Security', img: '/projects/azure.png', alt: 'Phishing awareness demo page',
+    id: 'azure', title: 'Azure Development and Security', img: '/projects/azure.jpg', alt: 'Phishing awareness demo page',
     desc: 'Deployed secure web apps on Azure and tuned network security groups for real-world threat models. Published a phishing awareness site that tracked clicks and IP addresses.',
     link: 'https://github.com/GrantHaw/VAISPhishingCampaign',
   },

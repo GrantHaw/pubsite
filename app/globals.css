@@ -255,7 +255,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .y2k-input::placeholder { color: #b77a9f; }
 
 /* shell */
-.shell-in { background: transparent; border: 0; outline: 0; color: var(--ice); font: inherit; flex: 1; min-width: 0; caret-color: var(--lime); }
+.shell-in, .shell-in:focus-visible { background: transparent; border: 0; outline: 0; box-shadow: none; color: var(--ice); font: inherit; flex: 1; min-width: 0; caret-color: var(--lime); }
 .shell-out { max-height: 300px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--hot) transparent; }
 .shell-out a { color: var(--lime); text-decoration: underline; }
 
@@ -327,3 +327,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 @keyframes npflash { 50% { background: var(--hot); color: #fff; box-shadow: 0 0 8px var(--hot); } }
 .np-bar { display: block; height: 4px; margin-top: 6px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; max-width: 420px; }
 .np-bar i { display: block; height: 100%; background: var(--lime); transition: width 1s linear; }
+
+/* code in posts gets a real monospace, the pixel font is unreadable for long commands */
+.prose-y2k pre, .prose-y2k pre code { font-family: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace; font-size: 13.5px; line-height: 1.5; }
+.prose-y2k code { font-family: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace; font-size: .88em; }
+
+/* photos: placeholder until loaded, then a quick fade. color:transparent hides alt text while loading */
+.pic { display: block; background: linear-gradient(135deg, #3b1a45, #2a0822); }
+.pic img { color: transparent; opacity: 0; transition: opacity .35s ease; }
+.pic.in { background: none; }
+.pic.in img { opacity: 1; }
+.prose-y2k img { color: transparent; background: #2a0822; }
