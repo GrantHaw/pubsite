@@ -53,4 +53,5 @@ jobs:
           app-name:           pubsite
           resource-group-name: ${{ env.RESOURCE_GROUP }}
           package:            pubsite.zip
+          type:               zip
           clean:              true
