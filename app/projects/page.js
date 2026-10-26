@@ -11,7 +11,7 @@ export default function ProjectsPage() {
       <h1 className="page-title mb-6">projects</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
         {projects.map((p) => (
-          <Win key={p.id} id={p.id} title={p.id} className={p.wide ? 'md:col-span-2 lg:col-span-3' : ''} bodyClass={p.wide ? 'grid md:grid-cols-[260px_1fr] gap-6 items-center' : ''}>
+          <Win key={p.id} id={p.id} title={'C:\\projects\\' + p.id} className={p.wide ? 'md:col-span-2 lg:col-span-3' : ''} bodyClass={p.wide ? 'grid md:grid-cols-[260px_1fr] gap-6 items-center' : ''}>
             <div className={'rounded-lg overflow-hidden border-2 border-[var(--plum)] ' + (p.contain ? 'bg-white p-5 flex justify-center' : '')}>
               <Pic src={p.img} alt={p.alt} loading={p.wide ? undefined : 'lazy'} decoding="async" className={p.contain ? 'max-h-44' : 'w-full aspect-[16/10] object-cover'} />
             </div>
@@ -25,7 +25,7 @@ export default function ProjectsPage() {
         ))}
       </div>
 
-      <Win id="tools" title="tools" className="mt-8">
+      <Win id="tools" title="C:\projects\tools" className="mt-8">
         <h2 className="f-head text-[30px] leading-tight">Tools</h2>
         {toolCats.map((c) => {
           const list = tools.filter((t) => t.cat === c.id)

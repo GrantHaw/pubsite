@@ -40,7 +40,7 @@ export default function ContactPage() {
             <Pic src="/y2k/grant-ocean.jpg" alt="Grant smiling in front of the ocean, wearing a bandana and an orange shirt" className="w-full aspect-[4/5] object-cover" />
           </div>
         </div>
-        <Win title="links">
+        <Win title="C:\grant\links.txt">
           <ul className="space-y-2">
             <li><a className="underline decoration-2 underline-offset-4" href="mailto:contactme@ghaw.net">contactme@ghaw.net</a></li>
             <li><a className="underline decoration-2 underline-offset-4" href="https://www.linkedin.com/in/grant-hawerlander/" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
@@ -49,7 +49,7 @@ export default function ContactPage() {
         </Win>
       </aside>
 
-      <Win title="new_message.txt" className="lg:col-span-8">
+      <Win title="C:\grant\new_message.txt" className="lg:col-span-8">
         <h1 className="page-title !text-[clamp(38px,6vw,64px)] mb-6">contact</h1>
         <form onSubmit={onSubmit} className="space-y-3">
           <div className="grid sm:grid-cols-2 gap-3">

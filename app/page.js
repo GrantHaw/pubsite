@@ -55,7 +55,7 @@ export default function Home() {
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        <Win id="about" title="about_me.txt" className="order-1 lg:col-span-5">
+        <Win id="about" title="C:\grant\about_me.txt" className="order-1 lg:col-span-5">
           <div className="space-y-4 leading-relaxed">
             <p>hiii, I&apos;m Grant! I&apos;m a cybersecurity student at RIT and a penetration testing intern at Coalfire&apos;s Division Hex. My current specialty is AI/LLM penetration testing, particularly prompt injection, data and model poisoning, and system prompt leakage.</p>
             <p>I also run management operations for the RIT ITS Tech Center, building the internal tools that keep the repair shop running! Off the clock I&apos;m playing CTFs, emulating retro Wii games, or getting yelled at by my cat, Pinto.</p>
@@ -65,7 +65,7 @@ export default function Home() {
           <ShellWithMusic className="order-8 lg:order-2 lg:col-span-7" />
         </Suspense>
         <div className="order-7 lg:order-3 lg:col-span-7"><Suspense fallback={<LogLoading />}><GitLog id="gitlog" /></Suspense></div>
-        <Win title="profile" className="order-2 lg:order-4 lg:col-span-5">
+        <Win title="C:\grant\profile.txt" className="order-2 lg:order-4 lg:col-span-5">
           <dl>
             <div className="stat"><dt>pronouns</dt><dd>they/them</dd></div>
             <div className="stat"><dt>school</dt><dd>RIT, Cybersecurity, May 2028</dd></div>
@@ -77,7 +77,7 @@ export default function Home() {
             <a className="gel silver" href="https://www.linkedin.com/in/grant-hawerlander/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           </div>
         </Win>
-        <Win id="latest" className="order-3 lg:order-5 lg:col-span-3" title="latest posts">
+        <Win id="latest" className="order-3 lg:order-5 lg:col-span-3" title="C:\blog">
           {posts.length ? (
             <ul>
               {posts.map((p, i) => (
@@ -96,7 +96,7 @@ export default function Home() {
           ) : <p>No posts yet.</p>}
           <Link href="/blog" className="gel silver mt-4">all posts</Link>
         </Win>
-        <Win className="order-4 lg:order-6 lg:col-span-3" title="projects">
+        <Win className="order-4 lg:order-6 lg:col-span-3" title="C:\projects">
           <ul className="space-y-2">
             {projects.slice(0, 4).map((p) => (
               <li key={p.id}><Link href={'/projects#' + p.id} className="flex items-center gap-2 hover:underline"><Pixel name="floppy" size={2} /><span className="font-semibold">{p.title}</span></Link></li>
@@ -104,14 +104,14 @@ export default function Home() {
           </ul>
           <Link href="/projects" className="gel silver mt-4">all projects</Link>
         </Win>
-        <Win className="order-5 lg:order-7 lg:col-span-3" title="tools">
+        <Win className="order-5 lg:order-7 lg:col-span-3" title="C:\projects\tools">
           <ul className="space-y-2">
             {tools.map((t) => (
               <li key={t.id}><Link href="/projects#tools" className="flex items-center gap-2 hover:underline"><Pixel name="term" size={2} /><span className="font-semibold">{t.name}</span></Link></li>
             ))}
           </ul>
         </Win>
-        <Win title="pinto.jpg" className="order-6 lg:order-8 lg:col-span-3" bodyClass="!p-3">
+        <Win title="C:\grant\pinto.jpg" className="order-6 lg:order-8 lg:col-span-3" bodyClass="!p-3">
           <Pic wrap="rounded-md overflow-hidden" src="/y2k/pinto-bag.jpg" width="600" height="800" loading="lazy" decoding="async" alt="Pinto the tuxedo cat peeking out of a paper shopping bag" className="w-full aspect-square object-cover object-[50%_45%] rounded-md border-2 border-[var(--plum)]" />
           <p className="f-ui text-[15px] mt-2 text-center">Pinto (Chief Morale Officer)</p>
         </Win>
